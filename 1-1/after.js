@@ -12,6 +12,7 @@ const statement = (invoice, plays) => {
     const result = Object.assign({}, aPerformance)
     result.play = playFor(result)
     result.amount = amountFor(result)
+    result.volumeCredits = volumeCreditsFor(result)
     return result;
   }
 
@@ -38,9 +39,22 @@ const statement = (invoice, plays) => {
       default:
         throw new Error(`unknown type: ${aPerformance.play.type}`)
     }
-
     return result
   }
+
+  //ボリューム特典ポイント算出
+  function volumeCreditsFor(aPerformance) {
+    let result = 0;
+    //ボリューム特典のポイント加算
+    result += Math.max(aPerformance.audience - 30, 0);
+
+    //喜劇の時は10人につき、さらにポイント加算
+    if ("comedy" === aPerformance.play.type) {
+      result += Math.floor(aPerformance.audience / 5)
+    }
+    return result;
+  }
+
 }
 
 function renderPlainText(data) {
@@ -62,19 +76,6 @@ function renderPlainText(data) {
     return result;
   }
 
-//ボリューム特典ポイント算出
-  function volumeCreditsFor(aPerformance) {
-    let result = 0;
-    //ボリューム特典のポイント加算
-    result += Math.max(aPerformance.audience - 30, 0);
-
-    //喜劇の時は10人につき、さらにポイント加算
-    if ("comedy" === aPerformance.play.type) {
-      result += Math.floor(aPerformance.audience / 5)
-    }
-    return result;
-  }
-
   function usd(aNumber) {
     return new Intl.NumberFormat("en-US",
       {style: "currency", currency: "USD", minimumFractionDigits: 2}
@@ -84,7 +85,7 @@ function renderPlainText(data) {
   function totalVolumeCredits() {
     let volumeCredits = 0;
     for (let perf of data.performances) {
-      volumeCredits += volumeCreditsFor(perf);
+      volumeCredits += perf.volumeCredits;
     }
     return volumeCredits
   }
