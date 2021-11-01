@@ -3,6 +3,10 @@ const invoices = JSON.parse(fs.readFileSync('./1-1/invoices.json', 'utf8'));
 const plays = JSON.parse(fs.readFileSync('./1-1/plays.json', 'utf8'));
 
 const statement = (invoice, plays) => {
+  return renderPlainText(invoice,plays)
+}
+
+function renderPlainText(invoice, plays){
   let result = `Statement for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
@@ -75,11 +79,8 @@ const statement = (invoice, plays) => {
     }
     return volumeCredits
   }
+
 }
-
-//ローカル変数を削除することによる利点は扱うべきローカルスコープが減ることによりメソッドの抽出が楽になる。
-//抽出を行う際は、必ずローカルスコープを取り除くようにしておく。
-
 
 const result = statement(invoices, plays)
 console.log(result)
