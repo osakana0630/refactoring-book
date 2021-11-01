@@ -3,15 +3,27 @@ const invoices = JSON.parse(fs.readFileSync('./1-1/invoices.json', 'utf8'));
 const plays = JSON.parse(fs.readFileSync('./1-1/plays.json', 'utf8'));
 
 const statement = (invoice, plays) => {
-  return renderPlainText(invoice,plays)
+  const statementData = {};
+  statementData.customer = invoice.customer;
+  statementData.performances = invoice.performances.map(enrichPerformance);
+  return renderPlainText(statementData, plays)
+
+  function enrichPerformance(aPerformance) {
+    const result = Object.assign({}, aPerformance)
+    result.play = playFor(result)
+    return result;
+  }
+
+  function playFor(aPerformance) {
+    return plays[aPerformance.playID];
+  }
 }
 
-function renderPlainText(invoice, plays){
-  let result = `Statement for ${invoice.customer}\n`;
-
-  for (let perf of invoice.performances) {
+function renderPlainText(data) {
+  let result = `Statement for ${data.customer}\n`;
+  for (let perf of data.performances) {
     //注文の内訳出力
-    result += ` ${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`
+    result += ` ${perf.play.name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`
   }
 
   result += `Amount owed is ${usd(totalAmount())}\n`
@@ -20,20 +32,16 @@ function renderPlainText(invoice, plays){
 
   function totalAmount() {
     let result = 0;
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
       result += amountFor(perf)
     }
     return result;
   }
 
-  function playFor(aPerformance) {
-    return plays[aPerformance.playID];
-  }
-
 //演劇一つあたりの料金を算出
   function amountFor(aPerformance) {
     let result = 0;
-    switch (playFor(aPerformance).type) {
+    switch (aPerformance.play.type) {
       case "tragedy":
         result = 40000;
         if (aPerformance.audience > 30) {
@@ -47,7 +55,7 @@ function renderPlainText(invoice, plays){
         }
         break;
       default:
-        throw new Error(`unknown type: ${playFor(aPerformance).type}`)
+        throw new Error(`unknown type: ${aPerformance.play.type}`)
     }
 
     return result
@@ -60,7 +68,7 @@ function renderPlainText(invoice, plays){
     result += Math.max(aPerformance.audience - 30, 0);
 
     //喜劇の時は10人につき、さらにポイント加算
-    if ("comedy" === playFor(aPerformance).type) {
+    if ("comedy" === aPerformance.play.type) {
       result += Math.floor(aPerformance.audience / 5)
     }
     return result;
@@ -74,7 +82,7 @@ function renderPlainText(invoice, plays){
 
   function totalVolumeCredits() {
     let volumeCredits = 0;
-    for (let perf of invoices.performances) {
+    for (let perf of data.performances) {
       volumeCredits += volumeCreditsFor(perf);
     }
     return volumeCredits
