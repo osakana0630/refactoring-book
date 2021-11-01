@@ -26,8 +26,8 @@ const plays = {
 
 
 function statement(invoice, plays) {
-  // return renderPlainText(createStatementData(invoice, plays));
-  return htmlStatement(invoice, plays);
+  return renderPlainText(createStatementData(invoice, plays));
+  // return htmlStatement(invoice, plays);
 }
 
 function renderPlainText(data) {
