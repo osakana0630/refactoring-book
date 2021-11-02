@@ -10,6 +10,7 @@ export default function createStatementData(invoice, plays) {
     const calculator = createPerformanceCalculator(aPerformance, playFor(aPerformance));
 
     const result = Object.assign({}, aPerformance)
+    //const result = {aPerformance}
     result.play = playFor(result)
     result.amount = calculator.amount
     result.volumeCredits = calculator.volumeCredits
@@ -30,7 +31,6 @@ export default function createStatementData(invoice, plays) {
 }
 
 function createPerformanceCalculator(aPerformance, aPlay) {
-  console.log(aPlay)
   switch (aPlay.type) {
     case "tragedy":
       return new TragedyCalculator(aPerformance, aPlay)
