@@ -10,7 +10,7 @@ export default function createStatementData(invoice, plays) {
     const calculator = createPerformanceCalculator(aPerformance, playFor(aPerformance));
 
     const result = Object.assign({}, aPerformance)
-    //const result = {aPerformance}
+    //const result = {...aPerformance}
     result.play = playFor(result)
     result.amount = calculator.amount
     result.volumeCredits = calculator.volumeCredits

@@ -1,6 +1,6 @@
 // const fs = require('fs');
-// const invoices = JSON.parse(fs.readFileSync('./1-1/invoices.json', 'utf8'));
-// const plays = JSON.parse(fs.readFileSync('./1-1/plays.json', 'utf8'));
+// const invoices = JSON.parse(fs.readFileSync('./src/invoices.json', 'utf8'));
+// const plays = JSON.parse(fs.readFileSync('./src/plays.json', 'utf8'));
 //
 // const statement = (invoice, plays) => {
 //   let totalAmount = 0;
